@@ -1,0 +1,7 @@
+#+TITLE: Project Report
+#+SUBTITLE: ESS103 Signals and Systems
+#+AUTHOR: Anirudh C
+* Reading the Audio Clip
+* Fourier Analysis
+* Low Pass Filter
+* High Pass Filter
