@@ -2,6 +2,95 @@
 #+SUBTITLE: ESS103 Signals and Systems
 #+AUTHOR: Anirudh C
 * Reading the Audio Clip
+We read the audio file using the following command
+#+BEGIN_SRC octave
+  [y, fs] = audioread(filename)
+#+END_SRC
+Here, $fs$ is the sampling frequency of the audio file, which is $48kHz$. This means that the audio is read at the rate of $48k$
+samples per second
 * Fourier Analysis
+Computationally, we can work with only samples of a signal as opposed to the continuous version. Hence, we need to apply a Fourier representation
+that applies on a discrete signal with $N$ samples to give a another discrete signal in the /frequency/ domain with $N$ samples. Hence we apply a 
+/DFT/ on the input audio signal. The algorithm to implement this is the /Fast Fourier Transform/.
+
+Below is the routine to read an audio file and return the DFT of the same.
+#+BEGIN_SRC octave
+function retVal = Fourier_Transform(filename)
+[x,fs] = audioread(filename);
+X = fft(x);
+retVal = X;
+return;
+endfunction
+#+END_SRC
 * Low Pass Filter
+Below is the routine to read an audio file and applies a low pass filter and plots the original signal and the filter output
+#+BEGIN_SRC octave
+function LowPass(filename)
+[x,fs] = audioread(filename);
+X = Fourier_Transform(filename);
+plot(x)
+N = length(x);
+k = floor(N/12);
+for i = k:(N-k)
+    X(i) = 0;
+endfor
+xnew = ifft(X);
+hold on
+plot(abs(xnew))
+hold off
+audiowrite(sprintf("%s_lowpass.au",filename),xnew,fs);
+endfunction
+#+END_SRC
+The routine also writes to a new audio file.
+
+
+Since the /DFT/ is conjugate-symmetric, to perform a lowpass filter is to multiply by a /rect/ in the frequency domain,
+which is to convolve with a /sinc/ in the time-domain.
+
+Hence the impulse response of the filter is a /sinc/
 * High Pass Filter
+Below is the routine to read an audio file and applies a high pass filter and plots the original signal and the filter output
+#+BEGIN_SRC octave
+function HighPass(filename)
+[x,fs] = audioread(filename);
+X = Fourier_Transform(filename);
+plot(x)
+N = length(x);
+k = floor(N/12);
+for i = 1:k
+    X(i) = 0;
+endfor
+for i = N-k:N
+    X(i) = 0;
+endfor
+xnew = ifft(X);
+hold on
+plot(abs(xnew))
+hold off
+audiowrite(sprintf("%s_highpass.au",filename),xnew,fs);
+endfunction
+#+END_SRC
+The routine also writes to a new audio file.
+
+Since the /DFT/ is conjugate-symmetric, to perform a lowpass filter is to multiply by a /rect/ in the frequency domain,
+which is to convolve with a /sinc/ in the time-domain.
+
+Hence the impulse response of the filter is a /sinc/
+* Output Plots
+Below are the plots of the original audio signal /(blue)/ and the filtered audio signal /(orange)/
+#+ATTR_LATEX: :caption \text{Audio 1: Lowpass}
+[[./images/audio-1-lowpass.jpg]]
+#+ATTR_LATEX: :caption \text{Audio 2: Lowpass}
+[[./images/audio-2-lowpass.jpg]]
+#+ATTR_LATEX: :caption \text{Audio 3: Lowpass}
+[[./images/audio-3-lowpass.jpg]]
+#+ATTR_LATEX: :caption \text{Audio 4: Lowpass}
+[[./images/audio-4-lowpass.jpg]]
+#+ATTR_LATEX: :caption \text{Audio 1: Highpass}
+[[./images/audio-1-highpass.jpg]]
+#+ATTR_LATEX: :caption \text{Audio 2: Highpass}
+[[./images/audio-2-highpass.jpg]]
+#+ATTR_LATEX: :caption \text{Audio 3: Highpass}
+[[./images/audio-3-highpass.jpg]]
+#+ATTR_LATEX: :caption \text{Audio 4: Highpass}
+[[./images/audio-4-highpass.jpg]]
