@@ -1,12 +1,15 @@
 function LowPass(filename)
 [x,fs] = audioread(filename);
 X = Fourier_Transform(filename);
+plot(abs(X))
 N = length(x);
-for i = 1:N
-    if (i > N/12)
-        X(i) = 0;
-    endif
+k = floor(N/12);
+for i = k:(N-k)
+    X(i) = 0;
 endfor
 xnew = ifft(X);
+hold on
+plot(abs(X))
+hold off
 audiowrite(sprintf("%s_lowpass.au",filename),xnew,fs);
 endfunction
